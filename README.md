@@ -134,6 +134,8 @@ or use VS Code Live Server.
 ## 📸 Preview
 
 Modern dark-themed interface with glowing effects and responsive design.
+<img width="1881" height="917" alt="image" src="https://github.com/user-attachments/assets/444d14de-cf01-4793-a81a-8da0f1d9e04b" />
+
 
 ---
 
