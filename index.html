@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>URLX — URL Shortener</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <canvas id="bgCanvas"></canvas>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="bg-grid"></div>
+  <div class="vignette"></div>
+
+  <nav class="navbar">
+    <div class="nav-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M9 17H7A5 5 0 0 1 7 7h2"/>
+          <path d="M15 7h2a5 5 0 1 1 0 10h-2"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </div>
+      <span class="logo-text">URLX</span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-pill">
+        <span class="nav-pill-dot"></span>
+        Live
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrapper">
+
+    <header class="hero">
+      <div class="hero-chip">
+        <span class="chip-dot"></span>
+        Free URL Shortener
+      </div>
+      <h1>
+        <span class="h1-line">Shorten. Share.</span>
+        <span class="h1-line accent-line"><span class="accent-word">Track.</span></span>
+      </h1>
+      <p class="tagline">Transform any long URL into a clean, powerful short link — instantly and for free.</p>
+    </header>
+
+    <section class="card input-card">
+      <label class="input-label" for="longUrl">Paste your long URL</label>
+      <div class="input-row">
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          <input type="url" id="longUrl" placeholder="https://example.com/very/long/url/here" autocomplete="off" spellcheck="false"/>
+        </div>
+        <button id="shortenBtn" onclick="shortenURL()">
+          <span id="btnText">Shorten</span>
+          <svg id="btnArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span id="btnSpinner" class="spinner hidden"></span>
+        </button>
+      </div>
+      <p id="errorMsg" class="error-msg hidden"></p>
+    </section>
+
+    <section id="result" class="card result-card hidden">
+      <div class="result-header">
+        <span class="result-label">Your link is ready</span>
+        <div class="live-badge">
+          <span class="live-dot"></span> Active
+        </div>
+      </div>
+      <div class="url-display">
+        <span class="terminal-prefix">&gt;</span>
+        <a id="shortLink" href="#" target="_blank" class="short-url"></a>
+        <button class="icon-btn copy-btn" onclick="copyURL()" title="Copy link">
+          <svg id="copyIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg id="checkIcon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+      </div>
+      <div class="original-url">
+        <span class="orig-label">Original:</span>
+        <span id="originalDisplay" class="orig-value"></span>
+      </div>
+      <div class="result-actions">
+        <button class="action-btn analytics-btn" onclick="toggleStats()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          Analytics
+        </button>
+        <button class="action-btn qr-btn" onclick="toggleQR()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
+          QR Code
+        </button>
+        <button class="action-btn reset-btn" onclick="resetForm()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.91"/></svg>
+          New Link
+        </button>
+      </div>
+    </section>
+
+    <section id="qrBox" class="card qr-card hidden">
+      <div class="panel-header">
+        <div class="panel-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+          QR Code
+        </div>
+        <button class="dl-btn" onclick="downloadQR()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+      </div>
+      <div class="qr-body">
+        <div class="qr-frame"><div id="qrCode"></div></div>
+        <div class="qr-info">
+          <p class="qr-hint">Scan with any camera app to open the short link instantly on any device.</p>
+          <div class="qr-chip" id="qrUrlChip"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="statsBox" class="card stats-card hidden">
+      <div class="panel-header">
+        <div class="panel-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          Link Analytics
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-tile">
+          <span class="stat-icon">👆</span>
+          <span class="stat-num" id="statClicks">—</span>
+          <span class="stat-desc">Total Clicks</span>
+        </div>
+        <div class="stat-tile">
+          <span class="stat-icon">📅</span>
+          <span class="stat-num stat-num-sm" id="statCreated">—</span>
+          <span class="stat-desc">Created On</span>
+        </div>
+      </div>
+      <div class="stat-url-row">
+        <span class="stat-url-label">Destination URL</span>
+        <span class="stat-url-val" id="statLongUrl">—</span>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-brand">URLX</div>
+    <div class="footer-msg">
+      <span class="footer-dot"></span>
+      More features coming soon — share buttons, custom aliases &amp; link expiry
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
