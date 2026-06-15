@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000";
+const API = "https://urlx-kgex.onrender.com";
 let currentCode = "", statsVisible = false, qrVisible = false, qrInstance = null;
 
 /* ════════════════════════════════
@@ -167,7 +167,7 @@ async function shortenURL() {
 
     result.classList.remove("hidden");
   } catch {
-    showError("Could not reach the server. Make sure it's running on port 8000.");
+    showError("Could not reach the server. Please try again in a few seconds.");
   } finally {
     btn.disabled = false;
     btnText.textContent = "Shorten";
